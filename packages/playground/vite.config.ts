@@ -12,7 +12,7 @@ interface StudioPluginOptions {
   apiPrefix?: string;
   basePath?: string;
 }
-const studioStandalonePlugin = (pts: StudioPluginOptions, targetHost: string): PluginOption => ({
+const studioStandalonePlugin = (opts: StudioPluginOptions): PluginOption => ({
   name: 'studio-standalone-plugin',
   transformIndexHtml(html: string) {
     return html
