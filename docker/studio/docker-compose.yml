@@ -1,0 +1,13 @@
+services:
+  studio:
+    build:
+      context: ../..
+      dockerfile: docker/studio/Dockerfile
+      args:
+        MASTRA_SERVER_HOST: ${MASTRA_SERVER_HOST:-chatdev.adex.network/mastra}
+        MASTRA_SERVER_PORT: ${MASTRA_SERVER_PORT:-443}
+        MASTRA_SERVER_PROTOCOL: ${MASTRA_SERVER_PROTOCOL:-https}
+        MASTRA_STUDIO_BASE_PATH: ${MASTRA_STUDIO_BASE_PATH:-}
+        MASTRA_HIDE_CLOUD_CTA: ${MASTRA_HIDE_CLOUD_CTA:-true}
+    ports:
+      - "8080:80"
