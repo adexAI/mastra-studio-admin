@@ -6,11 +6,7 @@ RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 WORKDIR /app
 
-# Copy workspace manifests first for better layer caching
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
-COPY turbo.json tsconfig.json tsconfig.build.json tsconfig.node.json ./
-
-# Copy all workspace sources (filtered by .dockerignore at repo root)
+# Copy all workspace sources (filtered by .dockerignore)
 COPY . .
 
 # Install dependencies
