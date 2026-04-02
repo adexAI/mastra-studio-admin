@@ -5,19 +5,32 @@ import react from '@vitejs/plugin-react';
 import type { Plugin, PluginOption, UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 
-const studioStandalonePlugin = (targetPort: string, targetHost: string): PluginOption => ({
+interface StudioPluginOptions {
+  targetPort: string;
+  targetHost: string;
+  targetProtocol?: string;
+  apiPrefix?: string;
+  basePath?: string;
+}
+const studioStandalonePlugin = (pts: StudioPluginOptions, targetHost: string): PluginOption => ({
   name: 'studio-standalone-plugin',
   transformIndexHtml(html: string) {
     return html
-      .replace(/%%MASTRA_SERVER_HOST%%/g, targetHost)
-      .replace(/%%MASTRA_SERVER_PORT%%/g, targetPort)
-      .replace(/%%MASTRA_API_PREFIX%%/g, '/api')
+      .replace(/%%MASTRA_SERVER_HOST%%/g, opts.targetHost)
+      .replace(/%%MASTRA_SERVER_PORT%%/g, opts.targetPort)
+      .replace(/%%MASTRA_API_PREFIX%%/g, opts.apiPrefix || process.env.MASTRA_API_PREFIX || '/api')
       .replace(/%%MASTRA_HIDE_CLOUD_CTA%%/g, 'true')
-      .replace(/%%MASTRA_STUDIO_BASE_PATH%%/g, '')
-      .replace(/%%MASTRA_SERVER_PROTOCOL%%/g, 'http')
-      .replace(/%%MASTRA_CLOUD_API_ENDPOINT%%/g, '')
+      .replace(/%%MASTRA_STUDIO_BASE_PATH%%/g, opts.basePath ?? process.env.MASTRA_STUDIO_BASE_PATH ?? '')
+      .replace(/%%MASTRA_SERVER_PROTOCOL%%/g, opts.targetProtocol || 'http')
+      .replace(/%%MASTRA_CLOUD_API_ENDPOINT%%/g, process.env.MASTRA_CLOUD_API_ENDPOINT || '')
       .replace(/%%MASTRA_EXPERIMENTAL_FEATURES%%/g, process.env.EXPERIMENTAL_FEATURES || 'false')
-      .replace(/%%MASTRA_EXPERIMENTAL_UI%%/g, process.env.MASTRA_EXPERIMENTAL_UI || 'false');
+      .replace(/%%MASTRA_EXPERIMENTAL_UI%%/g, process.env.MASTRA_EXPERIMENTAL_UI || 'false')
+      .replace(/%%MASTRA_THEME_TOGGLE%%/g, process.env.MASTRA_THEME_TOGGLE || 'false')
+      .replace(/%%MASTRA_EXPERIMENTAL_UI%%/g, process.env.MASTRA_EXPERIMENTAL_UI || 'false')
+      .replace(/%%MASTRA_TELEMETRY_DISABLED%%/g, process.env.MASTRA_TELEMETRY_DISABLED || '')
+      .replace(/%%MASTRA_TEMPLATES%%/g, process.env.MASTRA_TEMPLATES || 'false')
+      .replace(/%%MASTRA_AUTO_DETECT_URL%%/g, process.env.MASTRA_AUTO_DETECT_URL || '')
+      .replace(/%%MASTRA_REQUEST_CONTEXT_PRESETS%%/g, process.env.MASTRA_REQUEST_CONTEXT_PRESETS || '');
   },
 });
 
@@ -82,7 +95,7 @@ export default defineConfig(({ mode }) => {
     const targetHost = process.env.HOST || 'localhost';
 
     if (commonConfig.plugins) {
-      commonConfig.plugins.push(studioStandalonePlugin(targetPort, targetHost));
+      commonConfig.plugins.push(studioStandalonePlugin({ targetPort, targetHost }));
     }
 
     return {
@@ -97,6 +110,15 @@ export default defineConfig(({ mode }) => {
         },
       },
     };
+  }
+
+  // Production build: replace all placeholders from .env values
+  const targetHost = process.env.MASTRA_SERVER_HOST || 'localhost';
+  const targetPort = process.env.MASTRA_SERVER_PORT || '4111';
+  const targetProtocol = process.env.MASTRA_SERVER_PROTOCOL || 'http';
+
+  if (commonConfig.plugins) {
+    commonConfig.plugins.push(studioStandalonePlugin({ targetHost, targetPort, targetProtocol }));
   }
 
   return {

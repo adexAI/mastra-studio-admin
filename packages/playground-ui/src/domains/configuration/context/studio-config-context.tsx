@@ -1,4 +1,4 @@
-import { createContext, useContext, useLayoutEffect, useState } from 'react';
+import { createContext, useContext, useLayoutEffect, useEffect, useState } from 'react';
 import { useMastraInstanceStatus } from '../hooks/use-mastra-instance-status';
 import type { StudioConfig } from '../types';
 
@@ -77,6 +77,47 @@ export const StudioConfigProvider = ({
       return nextConfig;
     });
   };
+
+  // // Keep a ref so the message handler always calls the latest doSetConfig
+  // // without needing to re-attach the listener on every render.
+  // const doSetConfigRef = useRef(doSetConfig);
+  // doSetConfigRef.current = doSetConfig;
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      let data = event.data;
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+          console.log('[StudioConfigProvider] parsed message data:', data);
+        } catch (err) {
+          console.log('[StudioConfigProvider] failed to parse message data:', event.data, err);
+          return;
+        }
+      }
+      console.log('[StudioConfigProvider] message received:', data);
+      if (data?.type !== 'localStorage-sync') return;
+      let incoming = data?.headers;
+      // Some senders nest the payload inside data.data as a JSON string
+      if (!Array.isArray(incoming) && typeof data?.data === 'string') {
+        try {
+          const inner = JSON.parse(data.data);
+          console.log('[StudioConfigProvider] newHeaders:', { headers: inner?.headers });
+          setConfig(prev => {
+            const nextConfig = { ...prev, ...{ headers: inner?.headers } };
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(nextConfig));
+            console.log('[StudioConfigProvider] nextConfig:', nextConfig);
+            return nextConfig;
+          });
+        } catch (err) {
+          console.log('[StudioConfigProvider] failed to parse data.data:', data.data, err);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []); // empty deps — attach once, never re-register
 
   return (
     <StudioConfigContext.Provider value={{ ...config, setConfig: doSetConfig }}>
