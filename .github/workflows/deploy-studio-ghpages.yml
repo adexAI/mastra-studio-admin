@@ -67,10 +67,11 @@ jobs:
       - name: Build playground
         run: pnpm turbo build --filter ./packages/playground --filter ./packages/playground-ui
 
+      - name: Disable Jekyll
+        run: touch packages/playground/dist/.nojekyll
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
