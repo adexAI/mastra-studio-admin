@@ -9,9 +9,6 @@ WORKDIR /app
 # Copy all workspace sources (filtered by .dockerignore)
 COPY . .
 
-# Debug: verify files were copied
-RUN ls -la /app && echo "--- package.json check ---" && cat /app/package.json | head -5 || echo "MISSING package.json"
-
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
