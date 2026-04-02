@@ -10,19 +10,8 @@ WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY turbo.json tsconfig.json tsconfig.build.json tsconfig.node.json ./
 
-# Copy only packages needed for the build
-COPY packages/playground/package.json packages/playground/
-COPY packages/playground-ui/package.json packages/playground-ui/
-
-# Copy all other package.json files (required by pnpm workspace resolution)
-COPY packages/ packages/
-COPY workflows/ workflows/
-COPY stores/ stores/
-COPY voice/ voice/
-COPY deployers/ deployers/
-COPY auth/ auth/
-COPY workspaces/ workspaces/
-COPY mastracode/ mastracode/
+# Copy all workspace sources (filtered by .dockerignore at repo root)
+COPY . .
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile

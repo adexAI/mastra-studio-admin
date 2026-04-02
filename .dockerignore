@@ -1,0 +1,34 @@
+# Version control
+.git
+
+# Docs and examples (not needed for build)
+docs/
+examples/
+e2e-tests/
+explorations/
+templates/
+communications/
+__recordings__/
+
+# CI/CD
+.github/
+
+# Node artifacts
+**/node_modules/
+
+# Build outputs (rebuilt inside Docker)
+**/dist/
+**/.next/
+**/.turbo/
+
+# Local env files
+.env
+.env.*
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
