@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="/" />
+    <link rel="icon" type="image/svg+xml" href="./mastra.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mastra Studio</title>
+    <script>
+      window.MASTRA_TELEMETRY_DISABLED = '';
+      window.MASTRA_SERVER_HOST = 'localhost';
+      window.MASTRA_SERVER_PORT = '4111';
+      window.MASTRA_API_PREFIX = '/api';
+      window.MASTRA_HIDE_CLOUD_CTA = 'true';
+      window.MASTRA_STUDIO_BASE_PATH = '';
+      window.MASTRA_SERVER_PROTOCOL = 'http';
+      window.MASTRA_CLOUD_API_ENDPOINT = '';
+      window.MASTRA_EXPERIMENTAL_FEATURES = 'false';
+      window.MASTRA_TEMPLATES = 'false';
+      window.MASTRA_AUTO_DETECT_URL = '';
+      window.MASTRA_REQUEST_CONTEXT_PRESETS = '';
+      window.MASTRA_EXPERIMENTAL_UI = 'false';
+
+      try {
+        const storageValue = window.localStorage.getItem('mastra-playground-store');
+        const parsedStorage = storageValue ? JSON.parse(storageValue) : null;
+        const persistedTheme = parsedStorage?.state?.theme;
+
+        const selectedTheme = persistedTheme === 'light' || persistedTheme === 'system' ? persistedTheme : 'dark';
+
+        const resolvedTheme =
+          selectedTheme === 'system'
+            ? window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+            : selectedTheme;
+
+        document.documentElement.className = resolvedTheme;
+      } catch {}
+
+      (function () {
+        let retryCount = 0;
+        let currentEvents = null;
+        const baseDelay = 1000;
+        const maxDelay = 30000;
+
+        function getRetryDelay() {
+          // Exponential backoff: 1s, 2s, 4s, 8s... capped at 30s
+          const exponentialDelay = Math.min(baseDelay * Math.pow(2, retryCount), maxDelay);
+          // Add jitter: random value between 0 and 50% of the delay
+          const jitter = Math.random() * exponentialDelay * 0.5;
+          return exponentialDelay + jitter;
+        }
+
+        function connectSSE() {
+          const basePath = window.MASTRA_STUDIO_BASE_PATH || '';
+          currentEvents = new EventSource(`${basePath}/refresh-events`);
+
+          currentEvents.onopen = () => {
+            // Reset retry count on successful connection
+            retryCount = 0;
+          };
+
+          currentEvents.onmessage = event => {
+            if (event.data === 'refresh') {
+              window.location.reload();
+            }
+          };
+
+          currentEvents.onerror = () => {
+            currentEvents.close();
+            const delay = getRetryDelay();
+            retryCount++;
+            setTimeout(connectSSE, delay);
+          };
+        }
+
+        window.addEventListener('beforeunload', () => {
+          if (currentEvents) {
+            currentEvents.close();
+          }
+        });
+
+        connectSSE();
+      })();
+    </script>
+    <script type="module" crossorigin src="./assets/index-DXA4GaGa.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/style-Bhnsh01F.css">
+  </head>
+
+  <body class="overflow-hidden">
+    <div id="root"></div>
+  </body>
+</html>
