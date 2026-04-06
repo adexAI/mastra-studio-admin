@@ -85,33 +85,26 @@ export const StudioConfigProvider = ({
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      let data = event.data;
-      if (typeof data === 'string') {
-        try {
-          data = JSON.parse(data);
-          console.log('[StudioConfigProvider] parsed message data:', data);
-        } catch (err) {
-          console.log('[StudioConfigProvider] failed to parse message data:', event.data, err);
-          return;
-        }
-      }
+      const data: unknown = event.data;
       console.log('[StudioConfigProvider] message received:', data);
-      if (data?.type !== 'localStorage-sync') return;
-      let incoming = data?.headers;
-      // Some senders nest the payload inside data.data as a JSON string
-      if (!Array.isArray(incoming) && typeof data?.data === 'string') {
-        try {
-          const inner = JSON.parse(data.data);
-          console.log('[StudioConfigProvider] newHeaders:', { headers: inner?.headers });
-          setConfig(prev => {
-            const nextConfig = { ...prev, ...{ headers: inner?.headers } };
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(nextConfig));
-            console.log('[StudioConfigProvider] nextConfig:', nextConfig);
-            return nextConfig;
-          });
-        } catch (err) {
-          console.log('[StudioConfigProvider] failed to parse data.data:', data.data, err);
-        }
+      if (!data || typeof data !== 'object') return;
+      const payload = data as { type?: string; baseUrl?: unknown; headers?: unknown };
+
+      if (payload.type !== 'localStorage-sync') return;
+
+      const partial: Partial<StudioConfig> = {};
+      if (typeof payload.baseUrl === 'string') partial.baseUrl = payload.baseUrl;
+      if (payload.headers && typeof payload.headers === 'object' && !Array.isArray(payload.headers)) {
+        partial.headers = payload.headers as Record<string, string>;
+      }
+
+      if (Object.keys(partial).length) {
+        setConfig(prev => {
+          const nextConfig = { ...prev, ...partial };
+          console.log('[StudioConfigProvider] nextConfig:', nextConfig);
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(nextConfig));
+          return nextConfig;
+        });
       }
     };
 
