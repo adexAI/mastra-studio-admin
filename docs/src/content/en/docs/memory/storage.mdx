@@ -50,6 +50,7 @@ Each provider page includes installation instructions, configuration parameters,
 - [PostgreSQL](/reference/storage/postgresql)
 - [MongoDB](/reference/storage/mongodb)
 - [Upstash](/reference/storage/upstash)
+- [Redis](/reference/storage/redis)
 - [Cloudflare D1](/reference/storage/cloudflare-d1)
 - [Cloudflare KV & Durable Objects](/reference/storage/cloudflare)
 - [Convex](/reference/storage/convex)
@@ -137,10 +138,6 @@ export const agent = new Agent({
 })
 ```
 
-:::warning
-Agent-level storage isn't supported when using [Mastra Cloud Store](/docs/mastra-cloud/deployment#using-mastra-cloud-store). If you use Mastra Cloud Store, configure storage on the Mastra instance instead. This limitation doesn't apply if you bring your own database.
-:::
-
 ## Threads and resources
 
 Mastra organizes conversations using two identifiers:
@@ -205,7 +202,7 @@ export const agent = new Agent({
   memory: new Memory({
     options: {
       generateTitle: {
-        model: 'openai/gpt-5-mini',
+        model: '__OPENAI_MODEL_MINI__',
         instructions: 'Generate a 1 word title',
       },
     },

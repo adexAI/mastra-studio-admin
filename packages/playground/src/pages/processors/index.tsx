@@ -1,52 +1,63 @@
 import {
-  ButtonWithTooltip,
-  ProcessorsList,
-  ProcessorIcon,
+  ErrorState,
   ListSearch,
-  MainHeader,
-  EntityListPageLayout,
-  useProcessors,
+  NoDataPageLayout,
+  PageLayout,
+  PermissionDenied,
+  SessionExpired,
+  is401UnauthorizedError,
+  is403ForbiddenError,
 } from '@mastra/playground-ui';
-import { BookIcon } from 'lucide-react';
 import { useState } from 'react';
+import { NoProcessorsInfo } from '@/domains/processors/components/processors-list/no-processors-info';
+import { ProcessorsList } from '@/domains/processors/components/processors-list/processors-list';
+import { useProcessors } from '@/domains/processors/hooks/use-processors';
 
 export function Processors() {
   const { data: processors = {}, isLoading, error } = useProcessors();
   const [search, setSearch] = useState('');
 
+  if (error && is401UnauthorizedError(error)) {
+    return (
+      <NoDataPageLayout>
+        <SessionExpired />
+      </NoDataPageLayout>
+    );
+  }
+
+  if (error && is403ForbiddenError(error)) {
+    return (
+      <NoDataPageLayout>
+        <PermissionDenied resource="processors" />
+      </NoDataPageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <NoDataPageLayout>
+        <ErrorState title="Failed to load processors" message={error.message} />
+      </NoDataPageLayout>
+    );
+  }
+
+  if (Object.keys(processors).length === 0 && !isLoading) {
+    return (
+      <NoDataPageLayout>
+        <NoProcessorsInfo />
+      </NoDataPageLayout>
+    );
+  }
+
   return (
-    <EntityListPageLayout>
-      <EntityListPageLayout.Top>
-        <MainHeader withMargins={false}>
-          <MainHeader.Column>
-            <MainHeader.Title isLoading={isLoading}>
-              <ProcessorIcon /> Processors
-            </MainHeader.Title>
-          </MainHeader.Column>
-          <MainHeader.Column className="flex justify-end gap-2">
-            <ButtonWithTooltip
-              as="a"
-              href="https://mastra.ai/en/docs/agents/processors"
-              target="_blank"
-              rel="noopener noreferrer"
-              tooltipContent="Go to Processors documentation"
-            >
-              <BookIcon />
-            </ButtonWithTooltip>
-          </MainHeader.Column>
-        </MainHeader>
+    <PageLayout>
+      <PageLayout.TopArea>
         <div className="max-w-120">
           <ListSearch onSearch={setSearch} label="Filter processors" placeholder="Filter by name" />
         </div>
-      </EntityListPageLayout.Top>
+      </PageLayout.TopArea>
 
-      <ProcessorsList
-        processors={processors}
-        isLoading={isLoading}
-        error={error}
-        search={search}
-        onSearch={setSearch}
-      />
-    </EntityListPageLayout>
+      <ProcessorsList processors={processors} isLoading={isLoading} search={search} />
+    </PageLayout>
   );
 }
