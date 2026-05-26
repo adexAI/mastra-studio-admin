@@ -1,0 +1,57 @@
+Migration inventory:
+  active: instruction files - 2 found
+    - CLAUDE.md
+    - AGENTS.md
+  active: skills - 6 found
+    - e2e-tests-studio
+    - mastra-docs
+    - ralph-plan
+    - react-best-practices
+    - smoke-test
+    - tailwind-best-practices
+  active: command sources - 12 found
+    provider: source command (12)
+      - changeset
+      - commit
+      - document
+      - gh-bulk-issues
+      - gh-debug-issue
+      - gh-fix-ci
+      - gh-fix-lint
+      - gh-new-pr
+      - gh-pr-comments
+      - make-moves
+      - pr
+      - ralph-plan
+  inactive: subagents - none found
+Migration surfaces:
+  active: AGENTS.md - 1 instruction file(s) found.
+  active: skills - 18 skill(s) converted.
+  inactive: MCP config - No settings or MCP config found.
+  inactive: subagents - No subagents found.
+Migration report:
+  symlinked: AGENTS.md - Linked to CLAUDE.md.
+  manual_fix_required: .agents/skills/e2e-tests-studio/SKILL.md - Manual review required for Claude skill fields: `Triggers on`, `model`.
+  rewritten: .agents/skills/mastra-docs/SKILL.md - Converted Claude skill.
+  manual_fix_required: .agents/skills/ralph-plan/SKILL.md - Manual review required for Claude skill fields: `model`.
+  rewritten: .agents/skills/react-best-practices/SKILL.md - Converted Claude skill.
+  manual_fix_required: .agents/skills/smoke-test/SKILL.md - Manual review required for Claude skill fields: `model`.
+  rewritten: .agents/skills/tailwind-best-practices/SKILL.md - Converted Claude skill.
+  manual_fix_required: .agents/skills/source-command-changeset/SKILL.md - Converted source command `changeset` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-commit/SKILL.md - Converted source command `commit` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-document/SKILL.md - Converted source command `document` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-gh-bulk-issues/SKILL.md - Converted source command `gh-bulk-issues` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-gh-debug-issue/SKILL.md - Converted source command `gh-debug-issue` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-gh-fix-ci/SKILL.md - Converted source command `gh-fix-ci` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-gh-fix-lint/SKILL.md - Converted source command `gh-fix-lint` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-gh-new-pr/SKILL.md - Converted source command `gh-new-pr` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-gh-pr-comments/SKILL.md - Converted source command `gh-pr-comments` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-make-moves/SKILL.md - Converted source command `make-moves` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-pr/SKILL.md - Converted source command `pr` to a single-file Codex skill; review invocation and template placeholder semantics.
+  manual_fix_required: .agents/skills/source-command-ralph-plan/SKILL.md - Converted source command `ralph-plan` to a single-file Codex skill; review invocation and template placeholder semantics.
+  overwritten: .agents/skills/smoke-test - Existing Codex skill will be replaced.
+  overwritten: .agents/skills/react-best-practices - Existing Codex skill will be replaced.
+  overwritten: .agents/skills/e2e-tests-studio - Existing Codex skill will be replaced.
+  overwritten: .agents/skills/mastra-docs - Existing Codex skill will be replaced.
+  overwritten: .agents/skills/ralph-plan - Existing Codex skill will be replaced.
+  overwritten: .agents/skills/tailwind-best-practices - Existing Codex skill will be replaced.
